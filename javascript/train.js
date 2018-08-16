@@ -41,50 +41,24 @@ $("#submit").on("click", function(event) {
 
 // Firebase watcher + initial loader ; everytime that a child is added to the database, a snapshot of that child will be taken of the    database, and the function will be executed using that snapshot values.
 dataRef.ref().on("child_added", function(childSnapshot) {
-    // var nextArival;
-    // clearInterval(nextArival);
-    // nextArival = setInterval (nextTrainUpdate ,60000);
-    // setInterval(displayUpdate , 60000);   
-
+     
     var nextArival = nextTrainUpdate (childSnapshot.val().firstTrain , childSnapshot.val().frequency);
-    console.log("nextArival  ", nextArival);
+    console.log("nextArival  "+ moment(nextArival).format("hh:mm"));
     var minAway = MinsAwayUpdate (nextArival);
 
     console.log("freq "  + childSnapshot.val().frequency)
 
     var newRow = $("<tr>");
-    newRow.append(  "<td>" + childSnapshot.val().name           + "</td>"   +
+    newRow.html(  "<td>" + childSnapshot.val().name           + "</td>"   +
                     "<td>" + childSnapshot.val().destination    + "</td>"   +
                     "<td>" + childSnapshot.val().frequency      + "</td>"   +
-                    "<td>" + childSnapshot.val().nextArival     + "</td>"   +
-                    "<td>" + childSnapshot.val().minAway        + "</td>"   );   
+                    "<td>" + moment(nextArival).format("hh:mm") + "</td>"   +
+                    "<td>" + moment(minAway).format("mm")  + "</td>"
+                );   
     $("#data-row").append(newRow);
-    // function nextTrainUpdate(){
-    //     var nextTrain = childSnapshot.val().startTrain;
-    //     var freq = childSnapshot.val().frequency;
-    //     while (moment(nextTrain, "hhmm").isBefore(moment())) {
-    //         nextTrain += freq;    
-    //     }
-    //     return nextTrain;
-    // }
-
-    // function displayUpdate () {
-
-    // }
 
 
 
-    // var time = childSnapshot.val().firstTrain;
-    // var timeFormat = moment (time , "hhmmss").format("hhmm");
-    // console.log(timeFormat);
-    // var current = moment().format("hhmm");
-    // var differ = moment(time , "hhmmss").diff(moment(), 'minutes');
-    // console.log(differ);
-
-
-
- 
-  
   // Handle the errors
 }, function(errorObject) {
   console.log("Errors handled: " + errorObject.code);
@@ -99,19 +73,28 @@ dataRef.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", functio
 });
 
 
-function nextTrainUpdate (startTime , frequ){
-    console.log("frequ   "+frequ)
-    var nextTrain = startTime;
-    console.log("next train " + nextTrain);
-    var condition = moment(nextTrain, "hh:mm").isBefore(moment());
-    console.log("condition " + condition);
-    // while (condition) {
-        var nextTrain1 = moment(nextTrain, 'hh:mm').add(frequ, 'm');
-        console.log("inside the wile loop");
-        condition = moment(nextTrain, "hh:mm").isBefore(moment());  
-        console.log("condition " + condition);
-    // }
-    console.log("nextTrain1  "  +  nextTrain1); 
+function nextTrainUpdate (startTime , tFrequency){
+    var firstTime = startTime;   
+    // First Time (pushed back 1 year to make sure it comes before current time)
+    var firstTimeConverted = moment(firstTime, "HH:mm").subtract(1, "years");
+    // console.log(firstTimeConverted);
+    // Current Time
+    var currentTime = moment();
+    // console.log("CURRENT TIME: " + moment(currentTime).format("hh:mm"));
+    // Difference between the times
+    var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+    // console.log("DIFFERENCE IN TIME: " + diffTime);
+    // Time apart (remainder)
+    // console.log("tFrequency " + tFrequency);
+    var tRemainder = diffTime % tFrequency;
+    // console.log(tRemainder);
+    // Minute Until Train
+    var tMinutesTillTrain = tFrequency - tRemainder;
+    // console.log("MINUTES TILL TRAIN: " + tMinutesTillTrain);
+
+    // Next Train
+    var nextTrain = moment().add(tMinutesTillTrain, "minutes");
+    // console.log("ARRIVAL TIME: " + moment(nextTrain).format("hh:mm")); 
     return nextTrain;
 }
 
