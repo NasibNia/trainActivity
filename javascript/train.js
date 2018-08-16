@@ -42,9 +42,12 @@ $("#submit").on("click", function(event) {
 // Firebase watcher + initial loader ; everytime that a child is added to the database, a snapshot of that child will be taken of the    database, and the function will be executed using that snapshot values.
 dataRef.ref().on("child_added", function(childSnapshot) {
      
-    var nextArival = nextTrainUpdate (childSnapshot.val().firstTrain , childSnapshot.val().frequency);
-    console.log("nextArival  "+ moment(nextArival).format("hh:mm"));
-    var minAway = MinsAwayUpdate (nextArival);
+    // var nextArival = "";
+    // var minAway = "" ;
+    nextTrainUpdate (childSnapshot.val().firstTrain , childSnapshot.val().frequency);
+    // console.log("nextArival  "+ moment(nextArival).format("hh:mm"));
+    
+    // MinsAwayUpdate ();
 
     console.log("freq "  + childSnapshot.val().frequency)
 
@@ -74,6 +77,7 @@ dataRef.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", functio
 
 
 function nextTrainUpdate (startTime , tFrequency){
+
     var firstTime = startTime;   
     // First Time (pushed back 1 year to make sure it comes before current time)
     var firstTimeConverted = moment(firstTime, "HH:mm").subtract(1, "years");
@@ -94,26 +98,29 @@ function nextTrainUpdate (startTime , tFrequency){
 
     // Next Train
     var nextTrain = moment().add(tMinutesTillTrain, "minutes");
-    // console.log("ARRIVAL TIME: " + moment(nextTrain).format("hh:mm")); 
+    // console.log("ARRIVAL TIME: " + moment(nextTrain).format("hh:mm"));
+    
+    nextArival = nextTrain;
+    minAway = moment(tMinutesTillTrain,"m");
     return nextTrain;
 }
 
 // function that calculates how many minutes away is the train which schedueled for the arrival at time t 
-function MinsAwayUpdate ( t ) {   
-    // if next arival time is after current time, calculate the time difference and return the value
-    if (moment(t, "hh:mm").isAfter(moment())){
-        var minAway = moment(t, "hh:mm").diff(moment(), "minutes");
-        console.log("nextTrain comes in " + minAway + " minutes");
-        return minAway;
-    } 
-    // if time t == right now return 0 meaning train is here right now
-    else if(moment(t, "hh:mm").isSame(moment())){
-        console.log("Train is here");
-        return "is here right now";
-    } // otherwise return the string "already departed"
-    else {
-        console.log('OOOPS! This train has already departed , checkout the future arrivals');
-        return "already departed";
-    }
-}
+// function MinsAwayUpdate ( t ) {   
+//     // if next arival time is after current time, calculate the time difference and return the value
+//     if (moment(t, "hh:mm").isAfter(moment())){
+//         var minAway = moment(t, "hh:mm").diff(moment(), "minutes");
+//         console.log("nextTrain comes in " + minAway + " minutes");
+//         return minAway;
+//     } 
+//     // if time t == right now return 0 meaning train is here right now
+//     else if(moment(t, "hh:mm").isSame(moment())){
+//         console.log("Train is here");
+//         return "is here right now";
+//     } // otherwise return the string "already departed"
+//     else {
+//         console.log('OOOPS! This train has already departed , checkout the future arrivals');
+//         return "already departed";
+//     }
+// }
 
