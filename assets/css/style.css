@@ -103,7 +103,7 @@ h1{
     vertical-align: middle;
     -webkit-transform: perspective(1px) translateZ(0);
     transform: perspective(1px) translateZ(0);
-    box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+    box-shadow: 0 0 1px rgba(65, 30, 30, 0.932);
     position: relative;
     -webkit-transition-property: color;
     transition-property: color;
@@ -118,7 +118,7 @@ h1{
     left: 0;
     right: 0;
     bottom: 0;
-    background: black;
+    background: rgba(65, 30, 30, 0.932);
     -webkit-transform: scaleY(0);
     transform: scaleY(0);
     -webkit-transform-origin: 50% 0;
