@@ -85,7 +85,7 @@ dataRef.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", functio
   $("#frequency-display").text(snapshot.val().frequency);
 });
 
-// function that takes the start time of the train and the frequency and calculates the next train and the minutes away from the next arrival
+// function that takes the train start time and its frequency and calculates the next arrival and minutes away
 function nextTrainUpdate (startTime , freq){
 
     var firstTrain = startTime;   
