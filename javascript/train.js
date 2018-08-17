@@ -10,6 +10,9 @@ firebase.initializeApp(config);
 
 // Create a variable to reference the database.
 var dataRef = firebase.database();
+
+// Create a variable to check if inputs are not empty upon submittion.
+var isEmpty = true;
     
 // Defining variables and initializing them
 var name = "";
@@ -29,38 +32,45 @@ $("#submit").on("click", function(event) {
     destination = $("#destination").val().trim();
     firstTrain = $("#first-train").val().trim();
     frequency = $("#frequency").val().trim();
-  
-    // Pushing the variables in the firebase database
-    dataRef.ref().push({    
+
+    // check if all inputs are filled in
+    if (name !== "" &&  destination!== "" &&  firstTrain!== "" &&   frequency!== "") {
+        isEmpty = false;
+    } 
+
+    if (!isEmpty) {
+        // Pushing the variables in the firebase database
+        dataRef.ref().push({    
         name: name,
         destination: destination,
         firstTrain: firstTrain,
         frequency: frequency
     });
+    
+    } else {
+        console.log("some of the feilds are empty");
+        isEmpty = true;
+    }
+  
+
 });
 
 // Firebase watcher + initial loader ; everytime that a child is added to the database, a snapshot of that child will be taken of the    database, and the function will be executed using that snapshot values.
 dataRef.ref().on("child_added", function(childSnapshot) {
-     
-    // var nextArival = "";
-    // var minAway = "" ;
-    nextTrainUpdate (childSnapshot.val().firstTrain , childSnapshot.val().frequency);
-    // console.log("nextArival  "+ moment(nextArival).format("hh:mm"));
-    
-    // MinsAwayUpdate ();
-
-    console.log("freq "  + childSnapshot.val().frequency)
-
-    var newRow = $("<tr>");
+    nextTrainUpdate (childSnapshot.val().firstTrain , childSnapshot.val().frequency);    
+    var newRow = $("<tr class='text-center'>");
     newRow.html(  "<td>" + childSnapshot.val().name           + "</td>"   +
                     "<td>" + childSnapshot.val().destination    + "</td>"   +
                     "<td>" + childSnapshot.val().frequency      + "</td>"   +
-                    "<td>" + moment(nextArival).format("hh:mm") + "</td>"   +
+                    "<td>" + moment(nextArival).format("hh:mm A") + "</td>"   +
                     "<td>" + moment(minAway).format("mm")  + "</td>"
                 );   
     $("#data-row").append(newRow);
 
-
+    // clearing the form feilds after appending data to the DOM
+    $( '#train-form' ).each(function(){
+        this.reset();
+    });
 
   // Handle the errors
 }, function(errorObject) {
@@ -68,59 +78,29 @@ dataRef.ref().on("child_added", function(childSnapshot) {
 });
     
 dataRef.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", function(snapshot) {
-  // Change the HTML to reflect
+  // Change the HTML to reflect the added data
   $("#train-name-display").text(snapshot.val().name);
   $("#destination-display").text(snapshot.val().destination);
-//   $("#first-train-display").text(snapshot.val().firstTrain);
   $("#frequency-display").text(snapshot.val().frequency);
 });
 
 
-function nextTrainUpdate (startTime , tFrequency){
+function nextTrainUpdate (startTime , freq){
 
-    var firstTime = startTime;   
+    var firstTrain = startTime;   
     // First Time (pushed back 1 year to make sure it comes before current time)
-    var firstTimeConverted = moment(firstTime, "HH:mm").subtract(1, "years");
-    // console.log(firstTimeConverted);
+    var firstTrainConverted = moment(firstTrain, "HH:mm").subtract(1, "years");
     // Current Time
     var currentTime = moment();
-    // console.log("CURRENT TIME: " + moment(currentTime).format("hh:mm"));
     // Difference between the times
-    var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
-    // console.log("DIFFERENCE IN TIME: " + diffTime);
+    var diffTime = moment().diff(moment(firstTrainConverted), "minutes");
     // Time apart (remainder)
-    // console.log("tFrequency " + tFrequency);
-    var tRemainder = diffTime % tFrequency;
-    // console.log(tRemainder);
+    var tRemainder = diffTime % freq;
     // Minute Until Train
-    var tMinutesTillTrain = tFrequency - tRemainder;
-    // console.log("MINUTES TILL TRAIN: " + tMinutesTillTrain);
-
+    var tMinutesTillTrain = freq - tRemainder;
     // Next Train
-    var nextTrain = moment().add(tMinutesTillTrain, "minutes");
-    // console.log("ARRIVAL TIME: " + moment(nextTrain).format("hh:mm"));
-    
+    var nextTrain = moment().add(tMinutesTillTrain, "minutes");    
     nextArival = nextTrain;
     minAway = moment(tMinutesTillTrain,"m");
     return nextTrain;
 }
-
-// function that calculates how many minutes away is the train which schedueled for the arrival at time t 
-// function MinsAwayUpdate ( t ) {   
-//     // if next arival time is after current time, calculate the time difference and return the value
-//     if (moment(t, "hh:mm").isAfter(moment())){
-//         var minAway = moment(t, "hh:mm").diff(moment(), "minutes");
-//         console.log("nextTrain comes in " + minAway + " minutes");
-//         return minAway;
-//     } 
-//     // if time t == right now return 0 meaning train is here right now
-//     else if(moment(t, "hh:mm").isSame(moment())){
-//         console.log("Train is here");
-//         return "is here right now";
-//     } // otherwise return the string "already departed"
-//     else {
-//         console.log('OOOPS! This train has already departed , checkout the future arrivals');
-//         return "already departed";
-//     }
-// }
-
