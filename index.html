@@ -21,9 +21,6 @@
    <link href="https://fonts.googleapis.com/css?family=Knewave" rel="stylesheet">
    <!-- link the css file-->
    <link rel="stylesheet" href="assets/css/style.css">
-
-    
-
 </head>
 <body>
     <div class="container">
@@ -32,7 +29,7 @@
             <div class="col-md-1"></div>
             <!-- Jumbotron -->
             <div class="col-md-10">
-                    <div class="jumbotron-fluid mb-3 bg-primary text-light pt-21 pb-9 rounded">
+                    <div class="jumbotron jumbotron-fluid mb-3 bg-primary text-light pt-21 pb-9 rounded hvr-bounce-in">
                         <div class="container">
                             <h1 class="text-center">Dream Train</h1>
                             <p class="lead text-center">Pack up your things and hit the rail; Go everywhere you wish; it's that easy!</p>
@@ -45,8 +42,8 @@
             <div class="col-md-1"></div>
             <!-- Train Data -->
             <div class="col-md-10">
-                <div class="card">
-                    <div class="card-header card-header-lg bg-primary text-light text-center ">Current Train Scheduel</div>
+                <div class="card hvr-bounce-to-bottom">
+                    <div class="card-header card-header-lg bg-primary text-light text-center  ">Current Train Scheduel</div>
                     <div class="card-body">     
                         <table class="table mb-9">
                             <thead class="thead border-none text-center">
@@ -70,8 +67,8 @@
             <div class="col-md-1"></div>
             <!-- Add new Train -->
             <div class="col-md-10">
-                <div class="card">
-                    <div class="card-header bg-primary text-light mt-9 text-center">Add train</div>
+                <div class="card hvr-bounce-to-bottom">
+                    <div class="card-header bg-primary text-light mt-9 text-center hvr-float-shadow">Add train</div>
                     <div class="card-body">
                         <form id ="train-form">
                             <div class="form-group">
@@ -89,12 +86,9 @@
                             <div class="form-group">
                                 <label for="frequency">Frequency (min)</label>
                                 <input type="number" min = "1"  class="form-control" id="frequency" required>    
-                            </div>
-        
-        
+                            </div>       
                             <button type="submit" id="submit" class="btn btn-primary hvr-folat-shadow" required>Submit</button>
-                        </form>
-        
+                        </form>        
                     </div>
                 </div>
             </div>
@@ -102,9 +96,7 @@
         </div>
 
     </div>
-
     <!-- Including train.js -->
     <script src="javascript/train.js"></script>
-
 </body>
 </html>

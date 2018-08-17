@@ -37,7 +37,7 @@ $("#submit").on("click", function(event) {
     if (name !== "" &&  destination!== "" &&  firstTrain!== "" &&   frequency!== "") {
         isEmpty = false;
     } 
-
+    // if all inuts are filled in , the push the inputs to the firebase database
     if (!isEmpty) {
         // Pushing the variables in the firebase database
         dataRef.ref().push({    
@@ -46,7 +46,7 @@ $("#submit").on("click", function(event) {
         firstTrain: firstTrain,
         frequency: frequency
     });
-    
+    // if at least one input feild left blank the predefined boolean variable "isEmpty" sets back to true
     } else {
         console.log("some of the feilds are empty");
         isEmpty = true;
@@ -65,6 +65,7 @@ dataRef.ref().on("child_added", function(childSnapshot) {
                     "<td>" + moment(nextArival).format("hh:mm A") + "</td>"   +
                     "<td>" + moment(minAway).format("mm")  + "</td>"
                 );   
+    //appending the new row to DOM
     $("#data-row").append(newRow);
 
     // clearing the form feilds after appending data to the DOM
@@ -84,7 +85,7 @@ dataRef.ref().orderByChild("dateAdded").limitToLast(1).on("child_added", functio
   $("#frequency-display").text(snapshot.val().frequency);
 });
 
-
+// function that takes the start time of the train and the frequency and calculates the next train and the minutes away from the next arrival
 function nextTrainUpdate (startTime , freq){
 
     var firstTrain = startTime;   
@@ -92,7 +93,7 @@ function nextTrainUpdate (startTime , freq){
     var firstTrainConverted = moment(firstTrain, "HH:mm").subtract(1, "years");
     // Current Time
     var currentTime = moment();
-    // Difference between the times
+    // Difference between the times in minutes
     var diffTime = moment().diff(moment(firstTrainConverted), "minutes");
     // Time apart (remainder)
     var tRemainder = diffTime % freq;
