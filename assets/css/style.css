@@ -1,5 +1,5 @@
 body,html{
-    background: url("../images/bridge.jpg");
+    background: url("../assets/images/bridge.jpg");
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -10,7 +10,7 @@ body,html{
 }
 
 .jumbotron-fluid{
-    background: url("../images/wagon.jpg");
+    background: url("../assets/images/wagon.jpg");
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover; 
